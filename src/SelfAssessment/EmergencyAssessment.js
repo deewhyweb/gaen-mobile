@@ -1,13 +1,12 @@
 import React from "react"
 import { View, StyleSheet } from "react-native"
-import { Trans, useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next"
 
 import {
   QUESTION_KEY_AGREE,
   SCREEN_TYPE_RADIO,
   SCREEN_TYPE_EMERGENCY,
 } from "./constants"
-import survey_en from "./survey.en.json"
 import { Info } from "./Info"
 import { InfoText } from "./InfoText"
 import { Button } from "./Button"
@@ -18,17 +17,12 @@ import { Colors } from "../styles"
 /** @type {React.FunctionComponent<{}>} */
 export const EmergencyAssessment = ({ navigation }) => {
   const { t } = useTranslation()
-  const survey = survey_en
-
-  console.log(survey)
 
   const handleAgreePress = () => {
     navigation.push(SCREEN_TYPE_EMERGENCY)
   }
 
   const handleDisagreePress = () => {
-    // TODO: This question handling is a mess and should be refactored
-    // to support dynamic questions
     navigation.push("AssessmentQuestion", {
       question: agreeQuestion,
       option: agreeOption,
@@ -42,17 +36,21 @@ export const EmergencyAssessment = ({ navigation }) => {
         <ChoiceButtons
           agreePress={handleAgreePress}
           agreeTitle={
-            <TranslationButtonText
-              translator={t}
-              text={"assessment.agree_option_agree"}
-            />
+            <RTLEnabledText style={styles.boldText}>
+              {t("assessment.i_am") + " "}
+              <RTLEnabledText style={styles.regularText}>
+                {t("assessment.experiencing_symptoms")}
+              </RTLEnabledText>
+            </RTLEnabledText>
           }
           disagreePress={handleDisagreePress}
           disagreeTitle={
-            <TranslationButtonText
-              translator={t}
-              text={"assessment.agree_option_disagree"}
-            />
+            <RTLEnabledText style={styles.boldText}>
+              {t("assessment.i_am_not") + " "}
+              <RTLEnabledText style={styles.regularText}>
+                {t("assessment.experiencing_symptoms")}
+              </RTLEnabledText>
+            </RTLEnabledText>
           }
         />
       }
@@ -66,7 +64,6 @@ export const EmergencyAssessment = ({ navigation }) => {
   )
 }
 
-//TODO: we should map these for like multi choices and stuff
 const ChoiceButtons = ({
   agreeTitle,
   disagreeTitle,
@@ -97,17 +94,9 @@ const ChoiceButtons = ({
   )
 }
 
-const TranslationButtonText = ({ translator, text }) => (
-  <Trans t={translator} i18nKey={text}>
-    <RTLEnabledText />
-    <RTLEnabledText style={{ fontWeight: "bold" }} />
-  </Trans>
-)
-
 /** @type {SurveyQuestion} */
 const agreeQuestion = {
   option_key: QUESTION_KEY_AGREE,
-  //question_description: 'How old are you',
   question_key: QUESTION_KEY_AGREE,
   question_text: "How old are you?",
   question_type: "TEXT",
@@ -169,5 +158,11 @@ const styles = StyleSheet.create({
   },
   disagreeButtonContainerStyle: {
     paddingTop: 10,
+  },
+  boldText: {
+    fontWeight: "bold",
+  },
+  regularText: {
+    fontWeight: "normal",
   },
 })
